@@ -3381,7 +3381,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcGh3343") {
         it.defFile 'framework/gh3343/objclib.def'
         it.headers "$projectDir/framework/gh3343/objclib.h"
-        it.linkerOpts "-L$buildDir"
+        it.linkerOpts "-L$buildDir",  "-lobjcgh3343"
     }
 }
 
