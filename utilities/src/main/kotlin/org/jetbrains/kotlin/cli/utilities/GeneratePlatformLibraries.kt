@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.random.Random
 import kotlin.system.exitProcess
+import java.io.File as JFile
 
 private class Logger(val level: Level = Level.NORMAL) {
 
@@ -54,6 +54,9 @@ private fun Logger.logStackTrace(error: Throwable) {
     error.printStackTrace(PrintWriter(stringWriter))
     verbose(stringWriter.toString())
 }
+
+private fun createTempDir(prefix: String, parent: File): File =
+        File(createTempDir(prefix, directory = JFile(parent.absolutePath)).absolutePath)
 
 private sealed class ProcessingStatus {
     object WAIT: ProcessingStatus()
@@ -286,7 +289,7 @@ private fun generatePlatformLibraries(target: KonanTarget, inputDirectory: File,
         logger.verbose("Precompiling platform libraries to $cacheDirectory (cache kind: $cacheKind)")
     }
 
-    val tmpDirectory: File = outputDirectory.child("build-${Random.nextLong()}")
+    val tmpDirectory = createTempDir("build-", outputDirectory)
     // Delete the tmp directory in case of execution interruption.
     val deleteTmpHook = Thread {
         if (!saveTemps) {
